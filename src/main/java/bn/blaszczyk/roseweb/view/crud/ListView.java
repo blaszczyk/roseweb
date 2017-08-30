@@ -16,16 +16,15 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
-public class ListView<T extends Writable> extends CssLayout implements View
-{
+public class ListView<T extends Writable> extends HorizontalLayout implements View {
 	private static final long serialVersionUID = 5423863915998405006L;
-	
+
 	private EntityGrid<T> grid;
-//	private EntityForm<T> form;
+	private EntityForm<T> form;
 	private TextField filter;
 
 	private ListLogic<T> viewLogic;
-	private Button newProduct;
+	private Button newEntity;
 
 	private EntityDataProvider<T> dataProvider;
 
@@ -36,15 +35,13 @@ public class ListView<T extends Writable> extends CssLayout implements View
 		this.dataProvider = new EntityDataProvider<T>(type);
 		viewLogic = new ListLogic<>(this, type);
 		setSizeFull();
-		addStyleName("crud-view");
-		HorizontalLayout topLayout = createTopBar();
+		final HorizontalLayout topLayout = createTopBar();
 
 		grid = new EntityGrid<T>(type);
 		grid.setDataProvider(dataProvider);
 		grid.asSingleSelect().addValueChangeListener(event -> viewLogic.rowSelected(event.getValue()));
 
-//		form = new EntityForm<T>(viewLogic, type);
-		// form.setCategories(DataService.get().getAllCategories());
+		form = new EntityForm<T>(type);
 
 		VerticalLayout barAndGridLayout = new VerticalLayout();
 		barAndGridLayout.addComponent(topLayout);
@@ -54,31 +51,36 @@ public class ListView<T extends Writable> extends CssLayout implements View
 		barAndGridLayout.setStyleName("crud-main-layout");
 
 		addComponent(barAndGridLayout);
-		// addComponent(form);
+		addComponent(form);
+
+		setExpandRatio(barAndGridLayout, 1);
 
 		viewLogic.init();
 	}
 
 	public HorizontalLayout createTopBar() {
 		filter = new TextField();
-		filter.setStyleName("filter-textfield");
-		filter.setPlaceholder("Filter name, availability or category");
-		// ResetButtonForTextField.extend(filter);
-		// // Apply the filter to grid's data provider. TextField value is never null
+		filter.setPlaceholder("Filter");
 		filter.addValueChangeListener(event -> dataProvider.setFilter(event.getValue()));
+		filter.setWidthUndefined();
 
-		newProduct = new Button("New " + type.getSimpleName());
-		newProduct.addStyleName(ValoTheme.BUTTON_PRIMARY);
-		newProduct.setIcon(VaadinIcons.PLUS_CIRCLE);
-		newProduct.addClickListener(click -> viewLogic.newProduct());
+		newEntity = new Button("New " + type.getSimpleName());
+		newEntity.addStyleName(ValoTheme.BUTTON_PRIMARY);
+		newEntity.setIcon(VaadinIcons.PLUS_CIRCLE);
+		newEntity.addClickListener(click -> viewLogic.newEntity());
+		newEntity.setWidthUndefined();
 
-		HorizontalLayout topLayout = new HorizontalLayout();
+		final HorizontalLayout topLayout = new HorizontalLayout();
 		topLayout.setWidth("100%");
-		topLayout.addComponent(filter);
-		topLayout.addComponent(newProduct);
+		
+		topLayout.addComponent(filter);		
 		topLayout.setComponentAlignment(filter, Alignment.MIDDLE_LEFT);
-		topLayout.setExpandRatio(filter, 1);
-		topLayout.setStyleName("top-bar");
+		topLayout.setExpandRatio(filter, 3);
+
+		topLayout.addComponent(newEntity);
+		topLayout.setComponentAlignment(newEntity, Alignment.MIDDLE_RIGHT);
+		topLayout.setExpandRatio(newEntity, 2);
+		
 		return topLayout;
 	}
 
@@ -96,7 +98,7 @@ public class ListView<T extends Writable> extends CssLayout implements View
 	}
 
 	public void setNewProductEnabled(boolean enabled) {
-		newProduct.setEnabled(enabled);
+		newEntity.setEnabled(enabled);
 	}
 
 	public void clearSelection() {
@@ -111,14 +113,16 @@ public class ListView<T extends Writable> extends CssLayout implements View
 		return grid.getSelectedRow();
 	}
 
-	public void editProduct(T product) {
-//		if (product != null) {
-//			form.addStyleName("visible");
-//			form.setEnabled(true);
-//		} else {
-//			form.removeStyleName("visible");
-//			form.setEnabled(false);
-//		}
-//		form.editProduct(product);
+	public void editProduct(final T entity) {
+		if (entity != null) {
+			form.setWidth("400px");
+			form.addStyleName("visible");
+			form.setEnabled(true);
+		} else {
+			form.setWidth("0px");
+			form.removeStyleName("visible");
+			form.setEnabled(false);
+		}
+		form.setEntity(entity);
 	}
 }

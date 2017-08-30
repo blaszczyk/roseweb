@@ -8,6 +8,7 @@ import javax.servlet.annotation.WebServlet;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.VaadinServlet;
 
+import bn.blaszczyk.rose.RoseException;
 import bn.blaszczyk.rosecommon.tools.Preferences;
 import bn.blaszczyk.rosecommon.tools.TypeManager;
 
@@ -24,9 +25,17 @@ public class RoseWebServlet extends VaadinServlet
 	{
 		super.init(servletConfig);
 		final String roseFile = servletConfig.getInitParameter("rose-file");
-		TypeManager.parseRoseFile(RoseWebServlet.class.getResourceAsStream(roseFile));
+		try
+		{
+			TypeManager.parseRoseFile(RoseWebServlet.class.getResourceAsStream(roseFile));
+		}
+		catch (RoseException e)
+		{
+			throw new ServletException("error initializing rose environment", e);
+		}
 		Preferences.setMainClass(RoseWebServlet.class);
 	}
+	
 	
 	
 	

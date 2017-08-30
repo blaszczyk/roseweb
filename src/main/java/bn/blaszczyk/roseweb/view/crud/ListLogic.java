@@ -1,7 +1,7 @@
 package bn.blaszczyk.roseweb.view.crud;
 
+import bn.blaszczyk.rose.RoseException;
 import bn.blaszczyk.rose.model.Writable;
-import bn.blaszczyk.rosecommon.RoseException;
 import bn.blaszczyk.rosecommon.controller.ModelController;
 import bn.blaszczyk.rosecommon.tools.TypeManager;
 import bn.blaszczyk.roseweb.RoseWebUI;
@@ -46,7 +46,7 @@ public class ListLogic<T extends Writable> implements Serializable {
 	public void enter(String productId) {
 		if (productId != null && !productId.isEmpty()) {
 			if (productId.equals("new")) {
-				newProduct();
+				newEntity();
 			} else {
 				// Ensure this is selected even if coming directly here from
 				// login
@@ -101,7 +101,7 @@ public class ListLogic<T extends Writable> implements Serializable {
 		}
 	}
 
-	public void newProduct() {
+	public void newEntity() {
 		view.clearSelection();
 		setFragmentParameter("new");
 		try {

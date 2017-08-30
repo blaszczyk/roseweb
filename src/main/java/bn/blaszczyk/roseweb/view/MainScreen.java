@@ -12,8 +12,10 @@ import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.Resource;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.themes.ValoTheme;
 
 public class MainScreen extends HorizontalLayout
 {
@@ -24,17 +26,19 @@ public class MainScreen extends HorizontalLayout
 	public MainScreen()
 	{
 		final RoseWebUI ui = RoseWebUI.get();
-
+		
+		setStyleName("valo-menu-responsive");
+		setResponsive(true);
 		setSpacing(false);
-		setStyleName("main-screen");
-		CssLayout viewContainer = new CssLayout();
-
-		viewContainer.addStyleName("valo-content");
-
+		setSizeFull();
+		
+		final CssLayout viewContainer = new CssLayout();
 		viewContainer.setSizeFull();
 
 		final Navigator navigator = new Navigator(ui, viewContainer);
 		navigator.setErrorView(ErrorView.class);
+		navigator.addViewChangeListener(viewChangeListener);
+		
 		menu = new Menu(navigator);
 		for (final Class<? extends Readable> type : TypeManager.getEntityClasses())
 		{
@@ -44,12 +48,8 @@ public class MainScreen extends HorizontalLayout
 			menu.addView(new ListView<>(subclass), type.getName(), type.getSimpleName(), icon);
 		}
 
-		navigator.addViewChangeListener(viewChangeListener);
-
-		addComponent(menu);
-		addComponent(viewContainer);
+		addComponents(menu,viewContainer);
 		setExpandRatio(viewContainer, 1);
-		setSizeFull();
 	}
 
 	private final ViewChangeListener viewChangeListener = new ViewChangeListener()

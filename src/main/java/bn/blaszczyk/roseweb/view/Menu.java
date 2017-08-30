@@ -25,7 +25,7 @@ public class Menu extends CssLayout {
 	
 	private static final String VALO_MENUITEMS = "valo-menuitems";
 	private static final String VALO_MENU_TOGGLE = "valo-menu-toggle";
-	private static final String VALO_MENU_VISIBLE = "valo-menu-visible";
+	private static final String VALO_MENU_VISIBLE = "valo-menu-visible-deunemudda";
 	private Navigator navigator;
 	private Map<String, Button> viewButtons = new HashMap<String, Button>();
 
@@ -55,7 +55,7 @@ public class Menu extends CssLayout {
 		logoutMenu.addStyleName("user-menu");
 		menuPart.addComponent(logoutMenu);
 
-		final Button showMenu = new Button("Menu",  this::showMenu);
+		final Button showMenu = new Button("Menu", e -> toggleMenu());
 		showMenu.addStyleName(ValoTheme.BUTTON_PRIMARY);
 		showMenu.addStyleName(ValoTheme.BUTTON_SMALL);
 		showMenu.addStyleName(VALO_MENU_TOGGLE);
@@ -63,7 +63,7 @@ public class Menu extends CssLayout {
 		menuPart.addComponent(showMenu);
 
 		menuItemsLayout = new CssLayout();
-		menuItemsLayout.setPrimaryStyleName(VALO_MENUITEMS);
+//		menuItemsLayout.setPrimaryStyleName(VALO_MENUITEMS);
 		menuPart.addComponent(menuItemsLayout);
 
 		addComponent(menuPart);
@@ -81,15 +81,25 @@ public class Menu extends CssLayout {
 		createViewButton(name, caption, icon);
 	}
 	
-	public void showMenu(final ClickEvent event)
+	public void toggleMenu(final ClickEvent event)
 	{
-		if (menuPart.getStyleName().contains(VALO_MENU_VISIBLE))
+		toggleMenu();
+	}
+	
+	private void toggleMenu()
+	{
+		setMenuVisible(!menuPart.getStyleName().contains(VALO_MENU_VISIBLE));
+	}
+	
+	private void setMenuVisible(final boolean visible)
+	{
+		if (visible)
 		{
-			menuPart.removeStyleName(VALO_MENU_VISIBLE);
+			menuPart.addStyleName(VALO_MENU_VISIBLE);
 		}
 		else
 		{
-			menuPart.addStyleName(VALO_MENU_VISIBLE);
+			menuPart.removeStyleName(VALO_MENU_VISIBLE);
 		}
 	}
 	
@@ -119,6 +129,6 @@ public class Menu extends CssLayout {
 		{
 			selected.addStyleName("selected");
 		}
-		menuPart.removeStyleName(VALO_MENU_VISIBLE);
+		setMenuVisible(false);
 	}
 }

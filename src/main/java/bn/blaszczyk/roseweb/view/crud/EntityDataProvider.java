@@ -1,13 +1,12 @@
 package bn.blaszczyk.roseweb.view.crud;
 
-import java.util.Objects;
 import java.util.stream.Stream;
 
 import com.vaadin.data.provider.AbstractDataProvider;
 import com.vaadin.data.provider.Query;
 
+import bn.blaszczyk.rose.RoseException;
 import bn.blaszczyk.rose.model.Writable;
-import bn.blaszczyk.rosecommon.RoseException;
 import bn.blaszczyk.rosecommon.controller.ModelController;
 import bn.blaszczyk.roseweb.RoseWebUI;
 
@@ -40,7 +39,7 @@ public class EntityDataProvider<T extends Writable> extends AbstractDataProvider
 		}
 	}
 
-	public void delete(Writable entity) {
+	public void delete(final T entity) {
 		try {
 			controller.delete(entity);
 		} catch (RoseException e) {
@@ -51,20 +50,15 @@ public class EntityDataProvider<T extends Writable> extends AbstractDataProvider
 	}
 
 	public void setFilter(String filterText) {
-		Objects.requireNonNull(filterText, "Filter text cannot be null");
-		if (Objects.equals(this.filterText, filterText.trim())) {
-			return;
-		}
 		this.filterText = filterText.trim();
-
 		refreshAll();
 	}
 
 	@Override
-	public Integer getId(Writable Writable) {
-		Objects.requireNonNull(Writable, "Cannot provide an id for a null Writable.");
-
-		return Writable.getId();
+	public Integer getId(final T entity) {
+		if(entity == null)
+			return -1;
+		return entity.getId();
 	}
 
 	@Override
